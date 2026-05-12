@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Student Result Management System</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f4f6f9;
+        margin: 0;
+        padding: 20px;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: auto;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+    }
+
+    h2 {
+        text-align: center;
+    }
+
+    input {
+        width: 100%;
+        padding: 10px;
+        margin: 8px 0;
+        box-sizing: border-box;
+    }
+
+    button {
+        padding: 10px;
+        background: #28a745;
+        color: white;
+        border: none;
+        cursor: pointer;
+        width: 100%;
+        margin-top: 5px;
+    }
+
+    button:hover {
+        background: #218838;
+    }
+
+    table {
+        width: 100%;
+        margin-top: 20px;
+        border-collapse: collapse;
+    }
+
+    table, th, td {
+        border: 1px solid #ddd;
+    }
+
+    th, td {
+        padding: 10px;
+        text-align: center;
+    }
+
+    .delete-btn {
+        background: red;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+    }
+
+    .search-box {
+        margin-top: 15px;
+        margin-bottom: 10px;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Student Result Management System</h2>
+
+    <!-- Student Input -->
+    <input type="text" id="name" placeholder="Student Name">
+    <input type="number" id="math" placeholder="Math Marks">
+    <input type="number" id="science" placeholder="Science Marks">
+    <input type="number" id="english" placeholder="English Marks">
+
+    <button onclick="addStudent()">Add Student</button>
+
+    <!-- SEARCH -->
+    <input type="text" id="search" class="search-box" placeholder="Search student by name..." onkeyup="searchStudent()">
+
+    <!-- TABLE -->
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Total</th>
+                <th>Percentage</th>
+                <th>Grade</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="studentList"></tbody>
+    </table>
+</div>
+
+<script>
+let students = JSON.parse(localStorage.getItem("students")) || [];
+
+// Grade Calculation
+function gradeCalc(per) {
+    if (per >= 90) return "A+";
+    else if (per >= 75) return "A";
+    else if (per >= 60) return "B";
+    else if (per >= 40) return "C";
+    else return "F";
+}
+
+// Add Student
+function addStudent() {
+    let name = document.getElementById("name").value;
+    let math = parseInt(document.getElementById("math").value);
+    let science = parseInt(document.getElementById("science").value);
+    let english = parseInt(document.getElementById("english").value);
+
+    if (!name || isNaN(math) || isNaN(science) || isNaN(english)) {
+        alert("Please fill all fields");
+        return;
+    }
+
+    let total = math + science + english;
+    let percentage = (total / 300) * 100;
+    let grade = gradeCalc(percentage);
+
+    let student = {
+        name,
+        total,
+        percentage: percentage.toFixed(2),
+        grade
+    };
+
+    students.push(student);
+    localStorage.setItem("students", JSON.stringify(students));
+
+    displayStudents();
+    clearInputs();
+}
+
+// Display Students
+function displayStudents() {
+    let list = document.getElementById("studentList");
+    list.innerHTML = "";
+
+    students.forEach((s, index) => {
+        list.innerHTML += `
+            <tr>
+                <td>${s.name}</td>
+                <td>${s.total}</td>
+                <td>${s.percentage}%</td>
+                <td>${s.grade}</td>
+                <td><button class="delete-btn" onclick="deleteStudent(${index})">Delete</button></td>
+            </tr>
+        `;
+    });
+}
+
+// Delete Student
+function deleteStudent(index) {
+    students.splice(index, 1);
+    localStorage.setItem("students", JSON.stringify(students));
+    displayStudents();
+}
+
+// Clear Inputs
+function clearInputs() {
+    document.getElementById("name").value = "";
+    document.getElementById("math").value = "";
+    document.getElementById("science").value = "";
+    document.getElementById("english").value = "";
+}
+
+// SEARCH FUNCTION (Find Result)
+function searchStudent() {
+    let query = document.getElementById("search").value.toLowerCase();
+    let rows = document.querySelectorAll("#studentList tr");
+
+    rows.forEach(row => {
+        let name = row.children[0].textContent.toLowerCase();
+
+        if (name.includes(query)) {
+            row.style.display = "";
+        } else {
+            row.style.display = "none";
+        }
+    });
+}
+
+// Initial Load
+displayStudents();
+</script>
+
+</body>
+</html>
