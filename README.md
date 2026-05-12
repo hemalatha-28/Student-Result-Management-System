@@ -60,7 +60,10 @@ A simple and responsive web-based Student Result Management System built using H
     
     📊 Advanced dashboard UI
 
+
 👨‍💻 Author
 
-    Hemalatha
-    📌 GitHub: [GitHub Profile](https://github.com/hemalatha-28)
+Your Name
+📧 Email: hemalatha8153@gmail.com
+
+🌐 GitHub: [GitHub Profile](https://github.com/hemalatha-28)
